@@ -15,17 +15,16 @@ import android.widget.TextView;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.jetlag.blogwithj.article.Paragraph;
 import fr.jetlag.blogwithj.bean.Text;
 
 /**
  * Created by vince on 16/07/15.
  */
-public class TextEditionFragmentTest extends ActivityInstrumentationTestCase2<EditionActivity_> {
+public class TextCreationFragmentTest extends ActivityInstrumentationTestCase2<EditionActivity_> {
 
   private EditionActivity_ mActivity;
 
-  public TextEditionFragmentTest() {
+  public TextCreationFragmentTest() {
     super(EditionActivity_.class);
   }
 
@@ -36,45 +35,41 @@ public class TextEditionFragmentTest extends ActivityInstrumentationTestCase2<Ed
     setActivityInitialTouchMode(true);
     injectInstrumentation(InstrumentationRegistry.getInstrumentation());
     Intent intent = new Intent();
-    intent.putExtra(EditionActivity.ARG_PARAGRAPH, new Paragraph("hello world", new Text("hello all the world")));
     setActivityIntent(intent);
     mActivity = getActivity();
   }
 
   @Test
-  public void testExistingTitleIsShown() throws UiObjectNotFoundException {
+  public void testTitleIsShown() {
     TextView title = (TextView) mActivity.findViewById(R.id.action_title);
     ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), title);
-    assertEquals("hello world", title.getText().toString());
   }
 
   @Test
   public void testClickValidateParagraphIsFilledWithTitle() {
-    Espresso.onView(ViewMatchers.withId(R.id.action_title)).perform(ViewActions.clearText());
     Espresso.onView(ViewMatchers.withId(R.id.action_title)).perform(ViewActions.typeText("my new para"));
     Espresso.onView(ViewMatchers.withId(R.id.action_validate)).perform(ViewActions.click());
     assertEquals("my new para", mActivity.getParagraph().getQuestion());
   }
 
   @Test
-  public void testExistingContentIsShown() throws UiObjectNotFoundException {
+  public void testContentIsShown() throws UiObjectNotFoundException {
     EditText content = (EditText) mActivity.findViewById(R.id.content);
     ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), content);
-    assertEquals("hello all the world", content.getText().toString());
   }
 
   @Test
   public void testContentCanBeAdded() throws UiObjectNotFoundException {
     EditText content = (EditText) mActivity.findViewById(R.id.content);
-    Espresso.onView(ViewMatchers.withId(R.id.content)).perform(ViewActions.typeText(" from everywhere"));
-    assertEquals("hello all the world from everywhere", content.getText().toString());
+    Espresso.onView(ViewMatchers.withId(R.id.content)).perform(ViewActions.typeText("hello world"));
+    assertEquals("hello world", content.getText().toString());
   }
 
   @Test
   public void testClickValidateParagraphIsFilledWithContent() {
-    Espresso.onView(ViewMatchers.withId(R.id.content)).perform(ViewActions.typeText(" from everywhere"));
+    Espresso.onView(ViewMatchers.withId(R.id.content)).perform(ViewActions.typeText("hello world"));
     Espresso.onView(ViewMatchers.withId(R.id.action_validate)).perform(ViewActions.click());
-    assertEquals("hello all the world from everywhere", ((Text)mActivity.getParagraph().getBlockContent()).getText());
+    assertEquals("hello world", ((Text)mActivity.getParagraph().getBlockContent()).getText());
   }
 
   @Test

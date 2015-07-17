@@ -47,11 +47,9 @@ public class EditionActivity extends AppCompatActivity {
     if (getIntent().hasExtra(ARG_PARAGRAPH)) {
       paragraph = (Paragraph) getIntent().getSerializableExtra(ARG_PARAGRAPH);
     } else {
-      paragraph = new Paragraph("What's up today?", new Text(""));
+      paragraph = new Paragraph("", new Text(""));
       // probably show a dialog then
     }
-
-    setTitle(paragraph.getQuestion());
 
     if (savedInstanceState == null) {
       if (paragraph.getBlockContent() instanceof Text) {
@@ -74,6 +72,9 @@ public class EditionActivity extends AppCompatActivity {
     getMenuInflater().inflate(R.menu.edition, menu);
     EditText titleField = (EditText) menu.findItem(R.id.action_title).getActionView();
     titleField.setHint(getResources().getString(R.string.paragraph_title_hint));
+    if (!paragraph.getQuestion().isEmpty()) {
+      titleField.setText(paragraph.getQuestion());
+    }
     return super.onCreateOptionsMenu(menu);
   }
 

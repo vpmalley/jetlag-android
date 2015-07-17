@@ -111,6 +111,7 @@ public class ArticleDetailActivityTest
     assertNotNull(activity);
     assertEquals(1, monitor.getHits());
     assertEquals(EditionActivity_.class, activity.getClass());
+    assertTrue(activity.getParagraph().getQuestion().isEmpty());
   }
 
   @After
