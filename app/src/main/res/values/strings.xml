@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">BlogWithJ</string>
+    <string name="title_article_detail">Article Detail</string>
+    <string name="action_new_text">add new text paragraph</string>
+    <string name="action_new_media">add new media paragraph</string>
+    <string name="title_paragraph_edition">Inspired ?</string>
+    <string name="content_hint">Tell about your discoveries today ...</string>
+    <string name="action_title">Title</string>
+    <string name="action_ok">Ok</string>
+    <string name="paragraph_title_hint">Give a title to today\'s adventures</string>
+</resources>
