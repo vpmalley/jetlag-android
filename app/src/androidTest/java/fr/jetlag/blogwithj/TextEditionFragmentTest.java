@@ -67,7 +67,7 @@ public class TextEditionFragmentTest extends ActivityInstrumentationTestCase2<Ed
   @Test
   public void testParagraphIsFilledWithTitle() {
     Espresso.onView(ViewMatchers.withId(R.id.action_title)).perform(ViewActions.typeText("my new para"));
-    Espresso.onView(ViewMatchers.withText(R.string.action_ok)).perform(ViewActions.click());
+    Espresso.onView(ViewMatchers.withId(R.id.action_validate)).perform(ViewActions.click());
     assertEquals("my new para", mActivity.getParagraph().getQuestion());
   }
 

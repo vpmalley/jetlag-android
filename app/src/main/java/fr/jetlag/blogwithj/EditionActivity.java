@@ -32,7 +32,7 @@ public class EditionActivity extends AppCompatActivity {
   @Extra(ARG_PARAGRAPH)
   Paragraph paragraph;
 
-  EditText title;
+  //EditText title; // TODO figure the action bar lifecycle to know when to find it
 
   EditionFragment editionFragment;
 
@@ -43,8 +43,6 @@ public class EditionActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
-    title = (EditText) findViewById(R.id.action_title);
 
     if (getIntent().hasExtra(ARG_PARAGRAPH)) {
       paragraph = (Paragraph) getIntent().getSerializableExtra(ARG_PARAGRAPH);
@@ -94,8 +92,9 @@ public class EditionActivity extends AppCompatActivity {
   }
 
   private void saveViewToParagraph() {
+    EditText title = (EditText) findViewById(R.id.action_title);
     String newTitle = title.getText().toString();
-    if (newTitle.isEmpty()) {
+    if (!newTitle.isEmpty()) {
       paragraph.setQuestion(newTitle);
     }
   }

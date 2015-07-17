@@ -1,5 +1,6 @@
 package fr.jetlag.blogwithj;
 
+import android.app.Instrumentation;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.test.InstrumentationRegistry;
@@ -104,7 +105,12 @@ public class ArticleDetailActivityTest
     Espresso.onView(ViewMatchers.withId(R.id.fab)).perform(ViewActions.click());
     assertEquals(View.VISIBLE, newTextButton.getVisibility());
 
+    Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(EditionActivity_.class.getName(), null, false);
     Espresso.onView(ViewMatchers.withId(R.id.action_new_text)).perform(ViewActions.click());
+    EditionActivity_ activity = (EditionActivity_) monitor.waitForActivityWithTimeout(10000);
+    assertNotNull(activity);
+    assertEquals(1, monitor.getHits());
+    assertEquals(EditionActivity_.class, activity.getClass());
   }
 
   @After
