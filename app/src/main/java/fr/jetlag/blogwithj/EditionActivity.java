@@ -30,8 +30,16 @@ public class EditionActivity extends AppCompatActivity {
    */
   public static final String ARG_CONTENT = "content";
 
+  /**
+   * The index of the edited paragraph in the article
+   */
+  public static final String ARG_INDEX = "index";
+
   @Extra(ARG_PARAGRAPH)
   Paragraph paragraph;
+
+  @Extra(ARG_INDEX)
+  int paragraphIndex;
 
   //EditText title; // TODO figure the action bar lifecycle to know when to find it
 
@@ -49,7 +57,9 @@ public class EditionActivity extends AppCompatActivity {
       paragraph = (Paragraph) getIntent().getSerializableExtra(ARG_PARAGRAPH);
     } else {
       paragraph = new Paragraph("", new Text(""));
-      // probably show a dialog then
+    }
+    if (getIntent().hasExtra(ARG_INDEX)) {
+      paragraphIndex = getIntent().getIntExtra(ARG_INDEX, -1);
     }
 
     if (savedInstanceState == null) {
@@ -96,6 +106,7 @@ public class EditionActivity extends AppCompatActivity {
     paragraph.setContent(c);
     Intent intent = new Intent();
     intent.putExtra(ARG_PARAGRAPH, paragraph);
+    intent.putExtra(ARG_INDEX, paragraphIndex);
     setResult(RESULT_OK, intent);
     finish();
   }

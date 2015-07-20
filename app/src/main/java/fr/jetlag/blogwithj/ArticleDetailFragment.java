@@ -97,7 +97,7 @@ public class ArticleDetailFragment extends Fragment {
     paragraphList.setHasFixedSize(true);
     RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
     paragraphList.setLayoutManager(layoutManager);
-    paragraphList.setAdapter(new ArticleAdapter(article));
+    paragraphList.setAdapter(new ArticleAdapter(article, this));
   }
 
   private void setFabBehaviour() {
@@ -142,7 +142,7 @@ public class ArticleDetailFragment extends Fragment {
     newTextButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        EditionActivity_.intent(ArticleDetailFragment.this).startForResult(REQ_CREATION);
+        createParagraph();
 
         // to revert previous UI changes
         actionsToolbar.setVisibility(View.INVISIBLE);
@@ -151,19 +151,40 @@ public class ArticleDetailFragment extends Fragment {
     });
   }
 
-  public Article getArticle() {
-    return article;
+  public void createParagraph() {
+    EditionActivity_.intent(ArticleDetailFragment.this).startForResult(REQ_CREATION);
+  }
+
+  public void editParagraph(int paragraphIndex) {
+    EditionActivity_.intent(ArticleDetailFragment.this)
+        .paragraph(article.getParagraphs().get(paragraphIndex))
+        .paragraphIndex(paragraphIndex)
+        .startForResult(REQ_EDITION);
   }
 
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     Log.d("onActivityResult", "fragment " + requestCode);
     super.onActivityResult(requestCode, resultCode, data);
-    if ((REQ_CREATION == requestCode) && (data.hasExtra(EditionActivity.ARG_PARAGRAPH) && (Activity.RESULT_OK == resultCode))) {
+    if ((REQ_CREATION == requestCode) && (data != null) && data.hasExtra(EditionActivity.ARG_PARAGRAPH)
+        && (Activity.RESULT_OK == resultCode)) {
       Paragraph p = (Paragraph) data.getSerializableExtra(EditionActivity.ARG_PARAGRAPH);
-      // if p is new
       article.addParagraph(p);
       paragraphList.getAdapter().notifyDataSetChanged();
+    } else if ((REQ_EDITION == requestCode) && (data != null) && data.hasExtra(EditionActivity.ARG_PARAGRAPH)
+        && data.hasExtra(EditionActivity.ARG_INDEX) && (Activity.RESULT_OK == resultCode)) {
+      Paragraph p = (Paragraph) data.getSerializableExtra(EditionActivity.ARG_PARAGRAPH);
+      int paragraphIndex = data.getIntExtra(EditionActivity.ARG_INDEX, -1);
+      if (-1 != paragraphIndex) {
+        article.getParagraphs().set(paragraphIndex, p);
+      } else {
+        article.addParagraph(p);
+      }
+      paragraphList.getAdapter().notifyDataSetChanged();
     }
+  }
+
+  public Article getArticle() {
+    return article;
   }
 }

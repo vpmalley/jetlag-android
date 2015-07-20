@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import fr.jetlag.blogwithj.R;
+import fr.jetlag.blogwithj.article.ArticleAdapter;
 import fr.jetlag.blogwithj.article.Paragraph;
 
 /**
@@ -29,7 +30,7 @@ public class TextBlockDisplay implements BlockDisplay {
     }
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class ViewHolder extends ArticleAdapter.ViewHolder {
 
     final TextView titleView;
 
