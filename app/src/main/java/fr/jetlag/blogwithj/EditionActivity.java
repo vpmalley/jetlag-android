@@ -1,5 +1,6 @@
 package fr.jetlag.blogwithj;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -83,13 +84,20 @@ public class EditionActivity extends AppCompatActivity {
 
     switch (item.getItemId()) {
       case R.id.action_validate:
-        saveViewToParagraph();
-        Content c = editionFragment.saveViewToContent();
-        paragraph.setContent(c);
-      default: break;
+        saveAndFinish();
+        return true;
+      default: return false;
     }
+  }
 
-    return super.onOptionsItemSelected(item);
+  void saveAndFinish() {
+    saveViewToParagraph();
+    Content c = editionFragment.saveViewToContent();
+    paragraph.setContent(c);
+    Intent intent = new Intent();
+    intent.putExtra(ARG_PARAGRAPH, paragraph);
+    setResult(RESULT_OK, intent);
+    finish();
   }
 
   private void saveViewToParagraph() {

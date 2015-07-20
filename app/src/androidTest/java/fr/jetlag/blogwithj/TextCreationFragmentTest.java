@@ -74,13 +74,9 @@ public class TextCreationFragmentTest extends ActivityInstrumentationTestCase2<E
 
   @Test
   public void testClickValidateAndEndActivity() throws UiObjectNotFoundException {
-
     Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(ArticleDetailActivity.class.getName(), null, false);
     Espresso.onView(ViewMatchers.withId(R.id.action_validate)).perform(ViewActions.click());
-    ArticleDetailActivity activity = (ArticleDetailActivity) monitor.waitForActivityWithTimeout(10000);
-    assertNotNull(activity);
-    assertEquals(1, monitor.getHits());
-    assertEquals(ArticleDetailActivity.class, activity.getClass());
+    assertTrue(mActivity.isFinishing());
   }
 
 }

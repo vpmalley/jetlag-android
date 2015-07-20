@@ -2,6 +2,7 @@ package fr.jetlag.blogwithj;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -21,6 +23,7 @@ import org.androidannotations.annotations.EFragment;
 import fr.jetlag.blogwithj.article.Article;
 import fr.jetlag.blogwithj.article.ArticleAdapter;
 import fr.jetlag.blogwithj.article.DummyContent;
+import fr.jetlag.blogwithj.article.Paragraph;
 
 /**
  * A editionFragment representing a single Article detail screen.
@@ -42,7 +45,7 @@ public class ArticleDetailFragment extends Fragment {
   public static int REQ_CREATION = 101;
 
   /**
-   * The request code used when creating a paragraph
+   * The request code used when editing a paragraph
    */
   public static int REQ_EDITION = 102;
 
@@ -139,10 +142,28 @@ public class ArticleDetailFragment extends Fragment {
     newTextButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Intent intent = new Intent(getActivity(), EditionActivity_.class);
-        startActivityForResult(intent, REQ_CREATION);
+        EditionActivity_.intent(ArticleDetailFragment.this).startForResult(REQ_CREATION);
+
+        // to revert previous UI changes
+        actionsToolbar.setVisibility(View.INVISIBLE);
+        fab.setVisibility(View.VISIBLE);
       }
     });
   }
 
+  public Article getArticle() {
+    return article;
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    Log.d("onActivityResult", "fragment " + requestCode);
+    super.onActivityResult(requestCode, resultCode, data);
+    if ((REQ_CREATION == requestCode) && (data.hasExtra(EditionActivity.ARG_PARAGRAPH) && (Activity.RESULT_OK == resultCode))) {
+      Paragraph p = (Paragraph) data.getSerializableExtra(EditionActivity.ARG_PARAGRAPH);
+      // if p is new
+      article.addParagraph(p);
+      paragraphList.getAdapter().notifyDataSetChanged();
+    }
+  }
 }

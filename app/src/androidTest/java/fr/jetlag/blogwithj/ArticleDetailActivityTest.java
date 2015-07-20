@@ -112,6 +112,38 @@ public class ArticleDetailActivityTest
     assertEquals(1, monitor.getHits());
     assertEquals(EditionActivity_.class, activity.getClass());
     assertTrue(activity.getParagraph().getQuestion().isEmpty());
+    getInstrumentation().removeMonitor(monitor);
+  }
+
+  @Test
+  public void testClickNewTextAndFinish() throws UiObjectNotFoundException {
+    RecyclerView articleView = (RecyclerView) mActivity.findViewById(R.id.article_paragraphs);
+    ImageButton newTextButton = (ImageButton) mActivity.findViewById(R.id.action_new_text);
+    ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), newTextButton);
+    Espresso.onView(ViewMatchers.withId(R.id.fab)).perform(ViewActions.click());
+    assertEquals(View.VISIBLE, newTextButton.getVisibility());
+    assertEquals(3, articleView.getAdapter().getItemCount());
+
+    Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(EditionActivity_.class.getName(), null, false);
+    Espresso.onView(ViewMatchers.withId(R.id.action_new_text)).perform(ViewActions.click());
+    EditionActivity_ editionActivity = (EditionActivity_) monitor.waitForActivityWithTimeout(10000);
+    assertNotNull(editionActivity);
+    assertEquals(1, monitor.getHits());
+    assertEquals(EditionActivity_.class, editionActivity.getClass());
+    assertTrue(editionActivity.getParagraph().getQuestion().isEmpty());
+
+    // finish the other activity
+    editionActivity.saveAndFinish();
+    assertTrue(editionActivity.isFinishing());
+
+    ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), articleView);
+    try {
+      Thread.sleep(100); // so far no better way to make sure the recyclerview is updated
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    assertEquals(4, articleView.getAdapter().getItemCount());
+    getInstrumentation().removeMonitor(monitor);
   }
 
   @After
