@@ -153,7 +153,7 @@ public class ArticleDetailActivityTest
   }
 
   @UiThreadTest
-  public void testClickParagraphAndFinish() throws UiObjectNotFoundException {
+  public void testClickTextParagraphAndFinish() throws UiObjectNotFoundException {
     RecyclerView articleView = (RecyclerView) mActivity.findViewById(R.id.article_paragraphs);
     int initialNbItems = articleView.getAdapter().getItemCount();
 
@@ -163,18 +163,6 @@ public class ArticleDetailActivityTest
     final ArticleAdapter.ViewHolder viewHolder = (ArticleAdapter.ViewHolder) articleView.findViewHolderForPosition(1);
 
     viewHolder.itemView.performClick();
-
-    /*try {
-      runTestOnUiThread(new Runnable() {
-        @Override
-        public void run() {
-          viewHolder.itemView.performClick();
-        }
-      });
-    } catch (Throwable throwable) {
-      fail(throwable.toString());
-    }
-    */
 
     assertNotNull(editionActivity);
     assertEquals(1, monitor.getHits());
@@ -192,6 +180,54 @@ public class ArticleDetailActivityTest
       e.printStackTrace();
     }
     assertEquals(initialNbItems, articleView.getAdapter().getItemCount());
+    getInstrumentation().removeMonitor(monitor);
+  }
+
+  @Test
+  public void testClickNewMedia() throws UiObjectNotFoundException {
+    ImageButton newMediaButton = (ImageButton) mActivity.findViewById(R.id.action_new_media);
+    ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), newMediaButton);
+    Espresso.onView(ViewMatchers.withId(R.id.fab)).perform(ViewActions.click());
+    assertEquals(View.VISIBLE, newMediaButton.getVisibility());
+
+    Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(EditionActivity_.class.getName(), null, false);
+    Espresso.onView(ViewMatchers.withId(R.id.action_new_media)).perform(ViewActions.click());
+    EditionActivity_ activity = (EditionActivity_) monitor.waitForActivityWithTimeout(10000);
+    assertNotNull(activity);
+    assertEquals(1, monitor.getHits());
+    assertEquals(EditionActivity_.class, activity.getClass());
+    assertTrue(activity.getParagraph().getQuestion().isEmpty());
+    getInstrumentation().removeMonitor(monitor);
+  }
+
+  @Test
+  public void testClickNewMediaAndFinish() throws UiObjectNotFoundException {
+    RecyclerView articleView = (RecyclerView) mActivity.findViewById(R.id.article_paragraphs);
+    ImageButton newMediaButton = (ImageButton) mActivity.findViewById(R.id.action_new_media);
+    ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), newMediaButton);
+    Espresso.onView(ViewMatchers.withId(R.id.fab)).perform(ViewActions.click());
+    assertEquals(View.VISIBLE, newMediaButton.getVisibility());
+    int initialNbItems = articleView.getAdapter().getItemCount();
+
+    Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(EditionActivity_.class.getName(), null, false);
+    Espresso.onView(ViewMatchers.withId(R.id.action_new_media)).perform(ViewActions.click());
+    EditionActivity_ editionActivity = (EditionActivity_) monitor.waitForActivityWithTimeout(10000);
+    assertNotNull(editionActivity);
+    assertEquals(1, monitor.getHits());
+    assertEquals(EditionActivity_.class, editionActivity.getClass());
+    assertTrue(editionActivity.getParagraph().getQuestion().isEmpty());
+
+    // finish the other activity
+    editionActivity.saveAndFinish();
+    assertTrue(editionActivity.isFinishing());
+
+    ViewAsserts.assertOnScreen(mActivity.getWindow().getDecorView(), articleView);
+    try {
+      Thread.sleep(400); // so far no better way to make sure the recyclerview is updated
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    assertEquals(initialNbItems + 1, articleView.getAdapter().getItemCount());
     getInstrumentation().removeMonitor(monitor);
   }
 

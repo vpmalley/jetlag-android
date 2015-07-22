@@ -13,6 +13,7 @@ import org.androidannotations.annotations.Extra;
 import fr.jetlag.blogwithj.article.Content;
 import fr.jetlag.blogwithj.article.Paragraph;
 import fr.jetlag.blogwithj.bean.Text;
+import fr.jetlag.blogwithj.media.Gallery;
 
 /**
  * Created by vince on 16/07/15.
@@ -65,6 +66,8 @@ public class EditionActivity extends AppCompatActivity {
     if (savedInstanceState == null) {
       if (paragraph.getBlockContent() instanceof Text) {
         editionFragment = new TextEditionFragment_();
+      } else if (paragraph.getBlockContent() instanceof Gallery) {
+        editionFragment = new MediaEditionFragment_();
       } else {
         editionFragment = new TextEditionFragment_();
       }

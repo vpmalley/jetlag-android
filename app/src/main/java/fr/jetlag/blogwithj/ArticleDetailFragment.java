@@ -22,8 +22,11 @@ import org.androidannotations.annotations.EFragment;
 
 import fr.jetlag.blogwithj.article.Article;
 import fr.jetlag.blogwithj.article.ArticleAdapter;
+import fr.jetlag.blogwithj.article.Content;
 import fr.jetlag.blogwithj.article.DummyContent;
 import fr.jetlag.blogwithj.article.Paragraph;
+import fr.jetlag.blogwithj.bean.Text;
+import fr.jetlag.blogwithj.media.Gallery;
 
 /**
  * A editionFragment representing a single Article detail screen.
@@ -62,6 +65,8 @@ public class ArticleDetailFragment extends Fragment {
 
   ImageButton newTextButton;
 
+  ImageButton newMediaButton;
+
   /**
    * Mandatory empty constructor for the editionFragment manager to instantiate the
    * editionFragment (e.g. upon screen orientation changes).
@@ -86,10 +91,12 @@ public class ArticleDetailFragment extends Fragment {
     fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
     actionsToolbar = (LinearLayout) rootView.findViewById(R.id.actions_toolbar);
     newTextButton = (ImageButton) rootView.findViewById(R.id.action_new_text);
+    newMediaButton = (ImageButton) rootView.findViewById(R.id.action_new_media);
 
     populateList();
     setFabBehaviour();
     setNewTextAction();
+    setNewMediaAction();
     return rootView;
   }
 
@@ -142,7 +149,7 @@ public class ArticleDetailFragment extends Fragment {
     newTextButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        createParagraph();
+        createParagraph(new Text(""));
 
         // to revert previous UI changes
         actionsToolbar.setVisibility(View.INVISIBLE);
@@ -151,8 +158,25 @@ public class ArticleDetailFragment extends Fragment {
     });
   }
 
-  public void createParagraph() {
-    EditionActivity_.intent(ArticleDetailFragment.this).startForResult(REQ_CREATION);
+  /**
+   * Binding the creation of a text paragraph with its button
+   */
+  private void setNewMediaAction() {
+    newMediaButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        createParagraph(new Gallery());
+
+        // to revert previous UI changes
+        actionsToolbar.setVisibility(View.INVISIBLE);
+        fab.setVisibility(View.VISIBLE);
+      }
+    });
+  }
+
+  public void createParagraph(Content content) {
+    Paragraph p = new Paragraph("", content);
+    EditionActivity_.intent(ArticleDetailFragment.this).paragraph(p).startForResult(REQ_CREATION);
   }
 
   public void editParagraph(int paragraphIndex) {

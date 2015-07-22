@@ -8,4 +8,5 @@
     <string name="action_title">Title</string>
     <string name="action_ok">Ok</string>
     <string name="paragraph_title_hint">Give a title to today\'s adventures</string>
+    <string name="caption_hint">Tell about this picture ...</string>
 </resources>
